@@ -18,10 +18,6 @@ ROIs/
 ├── A4_A5_R.nii.gz
 ├── MT_MST_L.nii.gz
 ├── MT_MST_R.nii.gz
-├── A5_L.nii.gz
-├── A5_R.nii.gz
-├── STSda_STSdp_L.nii.gz
-├── STSda_STSdp_R.nii.gz
 ├── TA2_L.nii.gz
 └── TA2_R.nii.gz
 ```
@@ -32,22 +28,23 @@ ROIs/
 
 ## 特徴
 
-- `A4`、`A5`、`MT`、`MST`、`STSda`、`TA2` など、HCPexの短縮領域名をそのまま指定できます。
+- `A4`、`A5`、`MT`、`MST`、`TA2` など、HCPexの短縮領域名をそのまま指定できます。
 - `A4/A5` のように `/` で区切ると複数領域を1つのROIに結合できます。
 - 左右半球のROIを自動的に別々に作成します。
 - 出力名も自動的に決定します。
-  - `A4/A5` → `A4_A5_L.nii.gz`, `A4_A5_R.nii.gz`
-  - `STSda/STSdp` → `STSda_STSdp_L.nii.gz`, `STSda_STSdp_R.nii.gz`
+  * `TA2` → `TA2_L.nii.gz`, `TA2_R.nii.gz`
+  * `A4/A5` → `A4_A5_L.nii.gz`, `A4_A5_R.nii.gz`
 - HCPexの短縮名、左右のLabel ID、説明的なLabel Nameを含む対応表を利用します。
-- 必要なROIだけをHCPex atlasから直接抽出するため、426個すべての個別ROIをあらかじめ作成する必要がありません。
+- 必要なROIだけをHCPex atlasから直接抽出することができます。
 
 ## Requirements
 
-- Bash
 - [FSL](https://fsl.fmrib.ox.ac.uk/fsl/docs/)
-- NIfTI形式のHCPex volumetric atlas
+- HCPex volumetric atlas（HCPex.nii.gz、本レポジトリに同梱）
 
-HCPex atlas本体は公式HCPex repositoryから取得してください。
+`HCPex.nii.gz` は利用の便宜のため本リポジトリに同梱しています。このファイルはHCPex公式リポジトリのHCPex v1.1に由来します。
+
+公式HCPex repository：
 
 https://github.com/wayalan/HCPex
 
@@ -56,12 +53,14 @@ https://github.com/wayalan/HCPex
 ```text
 .
 ├── make_hcpex_rois.sh
-├── HCPex_regions_with_labels.tsv
+├── HCPex_regions.tsv
+├── HCPex.nii.gz
 ├── README.md
-└── README_ja.md
+├── README_ja.md
+└── LICENSE
 ```
 
-### `HCPex_regions_with_labels.tsv`
+### `HCPex_regions.tsv`
 
 対応表はタブ区切りの4列です。
 
@@ -77,9 +76,6 @@ MST      22    202    Medial_Superior_Temporal_Area
 MT       23    203    Middle_Temporal_Area
 A4       60    240    Auditory_4_Complex
 A5       61    241    Auditory_5_Complex
-STSda    63    243    Area_STSd_anterior
-STSdp    64    244    Area_STSd_posterior
-TA2      67    247    Area_TA2
 ```
 
 `Region` は引数として指定する短縮領域名です。`L_ID` と `R_ID` はHCPex atlas内の左右のLabel ID、`Label_Name` はHCPexのLookup Tableに基づく左右共通の名称（Long name）です。
@@ -92,11 +88,12 @@ git clone https://github.com/Kikubernetes/HCPex_ROI_Extractor.git
 cd HCPex_ROI_Extractor
 ```
 
-**注意**：スクリプト`make_hcpex_rois.sh`と対応表`HCPex_regions_with_labels.tsv`を同じディレクトリにおいてください。
+**注意**：スクリプト`make_hcpex_rois.sh`と対応表`HCPex_regions.tsv`を同じディレクトリにおいてください。
 
 ```bash
 bash make_hcpex_rois.sh HCPex.nii.gz ROI [ROI ...]
 ```
+
 実行したディレクトリ内にROIsディレクトリが作成され、結果が出力されます。
 
 ### １領域を抽出
@@ -137,7 +134,7 @@ bash make_hcpex_rois.sh HCPex.nii.gz A4/A5 MT/MST A5 STSda/STSdp TA2
 
 各ROIについて、スクリプトは以下を行います。
 
-1. `HCPex_regions_with_labels.tsv` から左右のHCPex Label IDを検索します。
+1. `HCPex_regions.tsv` から左右のHCPex Label IDを検索します。
 2. `fslmaths` を用いてHCPex atlasから該当ラベルを抽出します。
 3. `/` で複数領域が指定された場合は、それらを加算します。
 4. 結果をbinary maskに変換します。
@@ -167,7 +164,7 @@ A4_A5_R.nii.gz
 
 ## HCPex atlasについて
 
-本スクリプトは、Human Connectome Project multimodal parcellation atlasを拡張してvolumetric atlasとした HCPex atlasを対象としています。HCPexには360の皮質ラベルと66の皮質下ラベルが含まれ、合計426ラベルで構成されています。HCPex atlasは、公式リポジトリに含まれる mni_icbm152_t1_tal_nlin_asym_09c_brain.nii.gz の空間上に定義されています。
+本スクリプトは、Human Connectome Project multimodal parcellation atlasを拡張してvolumetric atlasとした HCPex atlasを対象としています。HCPexには360の皮質ラベルと66の皮質下ラベルが含まれ、合計426ラベルで構成されています。HCPex atlasは、公式リポジトリに含まれる `mni_icbm152_t1_tal_nlin_asym_09c_brain.nii.gz` の空間上に定義されています。
 
 公式repository：
 
@@ -187,11 +184,9 @@ HCPexは皮質領域についてHCP-MMP v1.0に基づいています。研究内
 
 本家HCPexのGitHub repositoryは **GNU General Public License v3.0（GPL-3.0）** で公開されています。
 
-`HCPex_regions_with_labels.tsv` はHCPexのLookup Tableに由来する領域ラベル情報を含むため、本リポジトリも **GNU General Public License v3.0** で公開することを想定しています。
+本リポジトリには、HCPex公式リポジトリに由来する HCPex.nii.gz およびLookup Tableに基づく領域ラベル情報を含む HCPex_regions.tsv が含まれています。そのため、本リポジトリも GNU General Public License v3.0（GPL-3.0） のもとで公開しています。
 
-GitHub公開時には、標準のGPL-3.0 `LICENSE` ファイルを追加してください。
-
-HCPexのライセンスについては以下を参照してください。
+詳細は本リポジトリの LICENSE ファイル、およびHCPex公式リポジトリを参照してください。
 
 https://github.com/wayalan/HCPex
 
