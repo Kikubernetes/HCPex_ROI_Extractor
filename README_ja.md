@@ -86,9 +86,18 @@ TA2      67    247    Area_TA2
 
 ## 使用方法
 
+リポジトリをクローンします。
+```bash
+git clone https://github.com/Kikubernetes/HCPex_ROI_Extractor.git
+cd HCPex_ROI_Extractor
+```
+
+**注意**：スクリプト`make_hcpex_rois.sh`と対応表`HCPex_regions_with_labels.tsv`を同じディレクトリにおいてください。
+
 ```bash
 bash make_hcpex_rois.sh HCPex.nii.gz ROI [ROI ...]
 ```
+実行したディレクトリ内にROIsディレクトリが作成され、結果が出力されます。
 
 ### １領域を抽出
 

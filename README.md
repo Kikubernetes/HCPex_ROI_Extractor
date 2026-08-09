@@ -84,9 +84,21 @@ TA2      67    247    Area_TA2
 
 ## Usage
 
+First, clone this repository and move into the repository directory.
+
+```bash
+git clone https://github.com/Kikubernetes/HCPex_ROI_Extractor.git
+cd HCPex_ROI_Extractor
+```
+
+**Note**: make_hcpex_rois.sh and the lookup table HCPex_regions_with_labels.tsv must be placed in the same directory.
+
+Run the script using the following syntax:
+
 ```bash
 bash make_hcpex_rois.sh HCPex.nii.gz ROI [ROI ...]
 ```
+The script automatically creates an ROIs directory in the directory from which it is executed and saves the extracted ROIs.
 
 ### Single region
 
